@@ -1,6 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,visualstudiocode,python,venv,dotenv
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,visualstudiocode,python,venv,dotenv
 
+### SQLite ###
+*.db
+*.sqlite3
+vindex.db
+
 ### dotenv ###
 .env
 

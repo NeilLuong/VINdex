@@ -5,17 +5,9 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from vindex.core.config import get_settings
 
+engine = create_engine(get_settings().database_url)
 
-engine = create_engine(
-    get_settings().database_url,
-    echo=True,
-)
-
-SessionLocal = sessionmaker(
-    bind=engine,
-    autocommit=False,
-    autoflush=False,
-)
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
 def get_db() -> Generator[Session, None, None]:

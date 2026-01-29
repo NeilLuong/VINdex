@@ -1,7 +1,11 @@
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
+
+
+def dollars_to_cents(v: Any) -> int:
+    return int(Decimal(str(v)) * 100)
 
 
 class VehicleCreate(BaseModel):
@@ -11,7 +15,7 @@ class VehicleCreate(BaseModel):
     horse_power: Annotated[int, Field(gt=0)]
     model_name: Annotated[str, Field(max_length=100)]
     model_year: Annotated[int, Field(ge=0)]
-    purchase_price: Annotated[Decimal, Field(ge=0)]
+    purchase_price: int
     fuel_type: Annotated[str, Field(max_length=20)]
 
     @field_validator("vin", mode="before")
@@ -21,6 +25,11 @@ class VehicleCreate(BaseModel):
             return v.upper()
         return v
 
+    @field_validator("purchase_price", mode="before")
+    @classmethod
+    def convert_price(cls, v: Any) -> int:
+        return dollars_to_cents(v)
+
 
 class VehicleUpdate(BaseModel):
     manufacturer_name: Annotated[str, Field(max_length=100)]
@@ -28,8 +37,13 @@ class VehicleUpdate(BaseModel):
     horse_power: Annotated[int, Field(gt=0)]
     model_name: Annotated[str, Field(max_length=100)]
     model_year: Annotated[int, Field(ge=0)]
-    purchase_price: Annotated[Decimal, Field(ge=0)]
+    purchase_price: int
     fuel_type: Annotated[str, Field(max_length=20)]
+
+    @field_validator("purchase_price", mode="before")
+    @classmethod
+    def convert_price(cls, v: Any) -> int:
+        return dollars_to_cents(v)
 
 
 class VehicleResponse(BaseModel):
@@ -41,5 +55,9 @@ class VehicleResponse(BaseModel):
     horse_power: int
     model_name: str
     model_year: int
-    purchase_price: Decimal
+    purchase_price: int
     fuel_type: str
+
+    @field_serializer("purchase_price")
+    def cents_to_dollars(self, v: int) -> Decimal:
+        return Decimal(v) / 100

@@ -1,15 +1,17 @@
 from json import JSONDecodeError
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from vindex.api.routes import router
+from vindex.core.database import engine
 from vindex.core.exceptions import VehicleNotFoundError
+from vindex.models.vehicle import Base
 
-app = FastAPI(
-    title="VINdex",
-)
+app = FastAPI(title="VINdex")
+
+Base.metadata.create_all(bind=engine)
 
 app.include_router(router)
 
