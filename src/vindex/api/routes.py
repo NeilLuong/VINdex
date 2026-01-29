@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
 from vindex.api.dependencies import get_repository
-from vindex.core.exceptions import VehicleNotFoundError
 from vindex.repository.vehicle import VehicleRepository
 from vindex.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
 
@@ -35,23 +34,12 @@ def get_vehicle(vin: str, repo: Annotated[VehicleRepository, Depends(get_reposit
 
 @router.put("/{vin}", response_model=VehicleResponse)
 def update_vehicle(vin: str, data: VehicleUpdate, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> VehicleResponse:
-    try:
-        vehicle = repo.update(vin, data)
-        return VehicleResponse.model_validate(vehicle)
-    except VehicleNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Cannot find vehicle with VIN '{vin}'",
-        )
+    vehicle = repo.update(vin, data)
+    return VehicleResponse.model_validate(vehicle)
 
 
 @router.delete("/{vin}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_vehicle(vin: str, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> Response:
-    try:
-        repo.delete(vin)
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
-    except VehicleNotFoundError:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Cannot find vehicle with VIN '{vin}'",
-        )
+    repo.delete(vin)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    
