@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vindex"
+dynamic = ["version"]
+description = 'Vehicle Inventory REST API'
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+keywords = []
+authors = [{ name = "neilluong", email = "luongdminh183@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "fastapi[standard]>=0.128.0",
+  "psycopg[binary]>=3.3.2",
+  "pydantic>=2.12.5",
+  "pydantic-settings>=2.12.0",
+  "sqlalchemy>=2.0.46",
+  "uvicorn[standard]>=0.40.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/neilluong/vindex#readme"
+Issues = "https://github.com/neilluong/vindex/issues"
+Source = "https://github.com/neilluong/vindex"
+
+[tool.hatch.version]
+path = "src/vindex/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/vindex tests}"
+
+[tool.coverage.run]
+source_pkgs = ["vindex", "tests"]
+branch = true
+parallel = true
+omit = ["src/vindex/__about__.py"]
+
+[tool.coverage.paths]
+vindex = ["src/vindex", "*/vindex/src/vindex"]
+tests = ["tests", "*/vindex/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[dependency-groups]
+dev = ["httpx>=0.28.1", "mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.14.14"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
