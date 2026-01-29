@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from vindex.core.exceptions import VehicleNotFoundError
+from vindex.core.exceptions import VehicleAlreadyExistsError, VehicleNotFoundError
 from vindex.models.vehicle import Vehicle
 from vindex.schemas.vehicle import VehicleCreate, VehicleUpdate
 
@@ -19,8 +19,10 @@ class VehicleRepository:
         return self.session.scalars(stmt).first()
 
     def create(self, data: VehicleCreate) -> Vehicle:
+        if self.get_by_vin(data.vin) is not None:
+            raise VehicleAlreadyExistsError(data.vin)
         vehicle = Vehicle(
-            vin=data.vin,  # Already normalized by schema
+            vin=data.vin,
             manufacturer_name=data.manufacturer_name,
             description=data.description,
             horse_power=data.horse_power,

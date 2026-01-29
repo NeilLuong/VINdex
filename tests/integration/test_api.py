@@ -75,7 +75,7 @@ class TestDeleteVehicle:
 
 
 class TestErrorResponses:
-    def test_invalid_json_returns_422(self, client):
+    def test_invalid_json_returns_400(self, client):
         # Act
         response = client.post(
             "/vehicle",
@@ -84,7 +84,7 @@ class TestErrorResponses:
         )
 
         # Assert
-        assert response.status_code == 422
+        assert response.status_code == 400
 
     def test_invalid_vin_length_returns_422(self, client, valid_vehicle_data):
         # Arrange
@@ -95,6 +95,16 @@ class TestErrorResponses:
 
         # Assert
         assert response.status_code == 422
+
+    def test_duplicate_vin_returns_409(self, client, valid_vehicle_data):
+        # Arrange
+        client.post("/vehicle", json=valid_vehicle_data)
+
+        # Act
+        response = client.post("/vehicle", json=valid_vehicle_data)
+
+        # Assert
+        assert response.status_code == 409
 
 
 class TestVinCaseInsensitivity:

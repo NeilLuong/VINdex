@@ -15,5 +15,5 @@ class Vehicle(Base):
     horse_power: Mapped[int]
     model_name: Mapped[str] = mapped_column(String(100))
     model_year: Mapped[int]
-    purchase_price: Mapped[int]  # Stored as cents
+    purchase_price: Mapped[int]
     fuel_type: Mapped[str] = mapped_column(String(20))
