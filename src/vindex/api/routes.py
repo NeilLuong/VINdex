@@ -15,19 +15,25 @@ def get_repository(db: Annotated[Session, Depends(get_db)]) -> VehicleRepository
 
 
 @router.get("", response_model=list[VehicleResponse])
-def list_vehicles(repo: Annotated[VehicleRepository, Depends(get_repository)]) -> list[VehicleResponse]:
+def list_vehicles(
+    repo: Annotated[VehicleRepository, Depends(get_repository)],
+) -> list[VehicleResponse]:
     vehicles = repo.get_all()
     return [VehicleResponse.model_validate(v) for v in vehicles]
 
 
 @router.post("", response_model=VehicleResponse, status_code=status.HTTP_201_CREATED)
-def create_vehicle(data: VehicleCreate, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> VehicleResponse:
+def create_vehicle(
+    data: VehicleCreate, repo: Annotated[VehicleRepository, Depends(get_repository)]
+) -> VehicleResponse:
     vehicle = repo.create(data)
     return VehicleResponse.model_validate(vehicle)
 
 
 @router.get("/{vin}", response_model=VehicleResponse)
-def get_vehicle(vin: str, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> VehicleResponse:
+def get_vehicle(
+    vin: str, repo: Annotated[VehicleRepository, Depends(get_repository)]
+) -> VehicleResponse:
     vehicle = repo.get_by_vin(vin)
     if vehicle is None:
         raise HTTPException(
@@ -38,13 +44,18 @@ def get_vehicle(vin: str, repo: Annotated[VehicleRepository, Depends(get_reposit
 
 
 @router.put("/{vin}", response_model=VehicleResponse)
-def update_vehicle(vin: str, data: VehicleUpdate, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> VehicleResponse:
+def update_vehicle(
+    vin: str,
+    data: VehicleUpdate,
+    repo: Annotated[VehicleRepository, Depends(get_repository)],
+) -> VehicleResponse:
     vehicle = repo.update(vin, data)
     return VehicleResponse.model_validate(vehicle)
 
 
 @router.delete("/{vin}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_vehicle(vin: str, repo: Annotated[VehicleRepository, Depends(get_repository)]) -> Response:
+def delete_vehicle(
+    vin: str, repo: Annotated[VehicleRepository, Depends(get_repository)]
+) -> Response:
     repo.delete(vin)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-    
