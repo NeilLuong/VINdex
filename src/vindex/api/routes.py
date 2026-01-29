@@ -1,12 +1,17 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy.orm import Session
 
-from vindex.api.dependencies import get_repository
+from vindex.core.database import get_db
 from vindex.repository.vehicle import VehicleRepository
 from vindex.schemas.vehicle import VehicleCreate, VehicleResponse, VehicleUpdate
 
 router = APIRouter(prefix="/vehicle", tags=["vehicles"])
+
+
+def get_repository(db: Annotated[Session, Depends(get_db)]) -> VehicleRepository:
+    return VehicleRepository(db)
 
 
 @router.get("", response_model=list[VehicleResponse])
