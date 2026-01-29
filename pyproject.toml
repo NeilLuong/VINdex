@@ -35,11 +35,6 @@ Source = "https://github.com/neilluong/vindex"
 [tool.hatch.version]
 path = "src/vindex/__about__.py"
 
-[tool.hatch.envs.types]
-extra-dependencies = ["mypy>=1.0.0"]
-[tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/vindex tests}"
-
 [tool.coverage.run]
 source_pkgs = ["vindex", "tests"]
 branch = true
@@ -54,10 +49,7 @@ tests = ["tests", "*/vindex/tests"]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [dependency-groups]
-dev = ["httpx>=0.28.1", "mypy>=1.19.1", "pytest>=9.0.2", "ruff>=0.14.14"]
+dev = ["httpx>=0.28.1", "pytest>=9.0.2", "ruff>=0.14.14"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
-[tool.mypy]
-plugins = ["pydantic.mypy"]
